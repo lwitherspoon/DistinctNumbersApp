@@ -82,33 +82,66 @@ public class MainActivity extends AppCompatActivity {
                 // Get string from user input field
                 String numbersString = numbersInput.getText().toString();
 
-                // Parse and display results only if string is numeric with spaces
-                if (numbersString.matches("[0-9 ]+")) {
+                if (numbersString.length() > 0) {
                     String[] array = numbersString.split(" ");
-                    int[] numArray = new int[10];
 
-                    for (int i = 0; i < numArray.length; i++) {
-                        numArray[i] = Integer.parseInt(array[i]);
+                    if (array.length > 0 && array.length <= 10) {
+
+                        int[] numArray = new int[array.length];
+
+                        // Parse and display results only if string is numeric with spaces
+
+                        for (int i = 0; i < array.length; i++) {
+                            if (array[i].matches("-?[0-9 ]+")) {
+                                numArray[i] = Integer.parseInt(array[i]);
+                            }
+                            // If not numeric, display error dialog and reset input field and result text
+                            else {
+                                AlertDialog.Builder dlgNumericAlert = new AlertDialog.Builder(MainActivity.this);
+
+                                dlgNumericAlert.setMessage("You input something other than numbers");
+                                dlgNumericAlert.setTitle("Error ...");
+                                dlgNumericAlert.setPositiveButton("RETRY", null);
+                                dlgNumericAlert.setCancelable(false);
+                                dlgNumericAlert.create().show();
+
+                                numbersInput.setText("");
+                                distinctNumbers.setText("");
+
+                                break;
+                            }
+                        }
+
+                        Arrays.sort(numArray);
+
+                        distinctNumbers.setText(countDistinctNumbersInArray(numArray) + " distinct numbers." + "\n\nThe distinct numbers are: " + "\n" + getDistinctNumbers(numArray));
+                    } else if (array.length > 10) {
+                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(MainActivity.this);
+
+                        dlgAlert.setMessage("You input more than 10 numbers!");
+                        dlgAlert.setTitle("Error ...");
+                        dlgAlert.setPositiveButton("RETRY", null);
+                        dlgAlert.setCancelable(false);
+                        dlgAlert.create().show();
+
+                        numbersInput.setText("");
+                        distinctNumbers.setText("");
                     }
-
-                    Arrays.sort(numArray);
-
-                    distinctNumbers.setText(countDistinctNumbersInArray(numArray) + " distinct numbers." + "\n\nThe distinct numbers are: " + "\n" + getDistinctNumbers(numArray));
                 }
 
-                // If not numeric, display error dialog and reset input field and result text
                 else {
-                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(MainActivity.this);
+                    AlertDialog.Builder dlgNoInputAlert = new AlertDialog.Builder(MainActivity.this);
 
-                    dlgAlert.setMessage("You input something other than numbers");
-                    dlgAlert.setTitle("Error ...");
-                    dlgAlert.setPositiveButton("RETRY", null);
-                    dlgAlert.setCancelable(false);
-                    dlgAlert.create().show();
+                    dlgNoInputAlert.setMessage("You didn\'t input any numbers!");
+                    dlgNoInputAlert.setTitle("Error ...");
+                    dlgNoInputAlert.setPositiveButton("RETRY", null);
+                    dlgNoInputAlert.setCancelable(false);
+                    dlgNoInputAlert.create().show();
 
                     numbersInput.setText("");
                     distinctNumbers.setText("");
                 }
+
 
             }
         });
